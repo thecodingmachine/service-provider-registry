@@ -1,4 +1,5 @@
 <?php
+
 namespace TheCodingMachine\ServiceProvider\Fixtures;
 
 use Assembly\ParameterDefinition;
@@ -14,7 +15,6 @@ class TestStatefulServiceProvider implements ServiceProvider
     {
         $this->foo = $foo;
     }
-
 
     public static function getServices()
     {

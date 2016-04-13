@@ -1,12 +1,11 @@
 <?php
-namespace TheCodingMachine\ServiceProvider;
 
+namespace TheCodingMachine\ServiceProvider;
 
 use Mouf\Picotainer\Picotainer;
 use Puli\Discovery\Api\Type\BindingType;
 use Puli\Discovery\Binding\ClassBinding;
 use Puli\Discovery\InMemoryDiscovery;
-use TheCodingMachine\ServiceProvider\Fixtures\Test;
 use TheCodingMachine\ServiceProvider\Fixtures\TestServiceProvider;
 use TheCodingMachine\ServiceProvider\Fixtures\TestStatefulServiceProvider;
 
@@ -15,7 +14,7 @@ class ServiceProviderRegistryTest extends \PHPUnit_Framework_TestCase
     public function testRegistry()
     {
         $registry = new Registry([
-            TestServiceProvider::class
+            TestServiceProvider::class,
         ]);
 
         $this->assertEquals(new TestServiceProvider(), $registry[0]);
@@ -24,7 +23,7 @@ class ServiceProviderRegistryTest extends \PHPUnit_Framework_TestCase
     public function testRegistryInjectInstance()
     {
         $registry = new Registry([
-            new TestServiceProvider()
+            new TestServiceProvider(),
         ]);
 
         $this->assertEquals(new TestServiceProvider(), $registry[0]);
@@ -34,7 +33,7 @@ class ServiceProviderRegistryTest extends \PHPUnit_Framework_TestCase
     public function testRegistryArrayWithParams()
     {
         $registry = new Registry([
-            [TestStatefulServiceProvider::class, [42]]
+            [TestStatefulServiceProvider::class, [42]],
         ]);
 
         $this->assertInstanceOf(TestStatefulServiceProvider::class, $registry[0]);
@@ -44,7 +43,7 @@ class ServiceProviderRegistryTest extends \PHPUnit_Framework_TestCase
     public function testUnset()
     {
         $registry = new Registry([
-            TestServiceProvider::class
+            TestServiceProvider::class,
         ]);
 
         $this->assertArrayHasKey(0, $registry);
@@ -107,7 +106,7 @@ class ServiceProviderRegistryTest extends \PHPUnit_Framework_TestCase
     public function testGetServices()
     {
         $registry = new Registry([
-            new TestServiceProvider()
+            new TestServiceProvider(),
         ]);
 
         $services = $registry->getServices(0);
@@ -121,7 +120,7 @@ class ServiceProviderRegistryTest extends \PHPUnit_Framework_TestCase
     public function testGetServiceFactory()
     {
         $registry = new Registry([
-            new TestServiceProvider()
+            new TestServiceProvider(),
         ]);
 
         $service = $registry->createService(0, 'param', new Picotainer([]));
@@ -132,7 +131,7 @@ class ServiceProviderRegistryTest extends \PHPUnit_Framework_TestCase
     public function testIterator()
     {
         $registry = new Registry([
-            TestServiceProvider::class
+            TestServiceProvider::class,
         ]);
 
         foreach ($registry as $key => $serviceProvider) {
@@ -140,6 +139,4 @@ class ServiceProviderRegistryTest extends \PHPUnit_Framework_TestCase
             $this->assertInstanceOf(TestServiceProvider::class, $serviceProvider);
         }
     }
-
 }
-

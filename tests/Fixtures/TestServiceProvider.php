@@ -1,4 +1,5 @@
 <?php
+
 namespace TheCodingMachine\ServiceProvider\Fixtures;
 
 use Assembly\ParameterDefinition;
@@ -11,12 +12,12 @@ class TestServiceProvider implements ServiceProvider
     public static function getServices()
     {
         return [
-            'serviceA' => function() {
+            'serviceA' => function () {
                 new \stdClass();
             },
-            'param' => function() {
+            'param' => function () {
                 return 42;
-            }
+            },
         ];
     }
 }

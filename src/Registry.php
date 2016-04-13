@@ -1,5 +1,7 @@
 <?php
+
 namespace TheCodingMachine\ServiceProvider;
+
 use Interop\Container\ContainerInterface;
 use Interop\Container\ServiceProvider;
 use Puli\Discovery\Api\Discovery;
@@ -13,13 +15,15 @@ use Puli\Discovery\Binding\ClassBinding;
 class Registry implements \ArrayAccess, \Iterator
 {
     /**
-     * The array with lazy values
+     * The array with lazy values.
+     *
      * @var array
      */
     private $lazyArray;
-    
+
     /**
-     * The array with constructed values
+     * The array with constructed values.
+     *
      * @var array
      */
     private $constructedArray = [];
@@ -40,7 +44,7 @@ class Registry implements \ArrayAccess, \Iterator
      * or an array of [class name, [constructor params]].
      * If a Puli $discovery object is passed, the registry is automatically populated with ServiceProviders from Puli.
      *
-     * @param array $lazyArray The array with lazy values
+     * @param array          $lazyArray The array with lazy values
      * @param Discovery|null $discovery
      */
     public function __construct(array $lazyArray = [], Discovery $discovery = null)
@@ -56,6 +60,7 @@ class Registry implements \ArrayAccess, \Iterator
      * Discovers service provider class names using Puli.
      *
      * @param Discovery $discovery
+     *
      * @return string[] Returns an array of service providers.
      */
     private function discover(Discovery $discovery) /*: array*/
@@ -68,37 +73,46 @@ class Registry implements \ArrayAccess, \Iterator
                 $serviceProviders[] = $binding->getClassName();
             }
         }
+
         return $serviceProviders;
     }
 
     /**
      * @param string|object $className The FQCN or the instance to put in the array
      * @param array ...$params The parameters passed to the constructor.
+     *
      * @return int The key in the array
+     *
      * @throws ServiceProviderRegistryInvalidArgumentException
      */
-    public function push($className, ...$params) {
+    public function push($className, ...$params)
+    {
         if ($className instanceof ServiceProvider) {
             $this->lazyArray[] = $className;
         } elseif (is_string($className)) {
-            $this->lazyArray[] = [ $className, $params ];
+            $this->lazyArray[] = [$className, $params];
         } else {
             throw new InvalidArgumentException('Push expects first parameter to be a fully qualified class name or an instance of Interop\\Container\\ServiceProvider');
         }
         end($this->lazyArray);
+
         return key($this->lazyArray);
     }
 
     /**
-     * Whether a offset exists
+     * Whether a offset exists.
+     *
      * @link http://php.net/manual/en/arrayaccess.offsetexists.php
+     *
      * @param mixed $offset <p>
-     * An offset to check for.
-     * </p>
-     * @return boolean true on success or false on failure.
-     * </p>
-     * <p>
-     * The return value will be casted to boolean if non-boolean was returned.
+     *                      An offset to check for.
+     *                      </p>
+     *
+     * @return bool true on success or false on failure.
+     *              </p>
+     *              <p>
+     *              The return value will be casted to boolean if non-boolean was returned.
+     *
      * @since 5.0.0
      */
     public function offsetExists($offset)
@@ -107,12 +121,16 @@ class Registry implements \ArrayAccess, \Iterator
     }
 
     /**
-     * Offset to retrieve
+     * Offset to retrieve.
+     *
      * @link http://php.net/manual/en/arrayaccess.offsetget.php
+     *
      * @param mixed $offset <p>
-     * The offset to retrieve.
-     * </p>
+     *                      The offset to retrieve.
+     *                      </p>
+     *
      * @return mixed Can return all value types.
+     *
      * @since 5.0.0
      */
     public function offsetGet($offset)
@@ -123,6 +141,7 @@ class Registry implements \ArrayAccess, \Iterator
             $item = $this->lazyArray[$offset];
             if ($item instanceof ServiceProvider) {
                 $this->constructedArray[$offset] = $item;
+
                 return $item;
             } elseif (is_array($item)) {
                 $className = $item[0];
@@ -132,20 +151,23 @@ class Registry implements \ArrayAccess, \Iterator
                 $params = [];
             }
             $this->constructedArray[$offset] = new $className(...$params);
+
             return $this->constructedArray[$offset];
         }
     }
 
     /**
-     * Offset to set
+     * Offset to set.
+     *
      * @link http://php.net/manual/en/arrayaccess.offsetset.php
+     *
      * @param mixed $offset <p>
-     * The offset to assign the value to.
-     * </p>
-     * @param mixed $value <p>
-     * The value to set.
-     * </p>
-     * @return void
+     *                      The offset to assign the value to.
+     *                      </p>
+     * @param mixed $value  <p>
+     *                      The value to set.
+     *                      </p>
+     *
      * @since 5.0.0
      */
     public function offsetSet($offset, $value)
@@ -153,12 +175,14 @@ class Registry implements \ArrayAccess, \Iterator
         throw new \LogicException('Not implemented');
     }
     /**
-     * Offset to unset
+     * Offset to unset.
+     *
      * @link http://php.net/manual/en/arrayaccess.offsetunset.php
+     *
      * @param mixed $offset <p>
-     * The offset to unset.
-     * </p>
-     * @return void
+     *                      The offset to unset.
+     *                      </p>
+     *
      * @since 5.0.0
      */
     public function offsetUnset($offset)
@@ -172,6 +196,7 @@ class Registry implements \ArrayAccess, \Iterator
      * The result is cached in the registry so 2 successive calls will trigger `getServices` only once.
      *
      * @param string $offset Key of the service provider in the registry
+     *
      * @return array
      */
     public function getServices($offset)
@@ -179,14 +204,16 @@ class Registry implements \ArrayAccess, \Iterator
         if (!isset($this->serviceFactories[$offset])) {
             $this->serviceFactories[$offset] = $this->offsetGet($offset)->getServices();
         }
+
         return $this->serviceFactories[$offset];
     }
 
     /**
-     * @param string $offset Key of the service provider in the registry
-     * @param string $serviceName Name of the service to fetch
+     * @param string             $offset      Key of the service provider in the registry
+     * @param string             $serviceName Name of the service to fetch
      * @param ContainerInterface $container
-     * @param callable|null $previous
+     * @param callable|null      $previous
+     *
      * @return mixed
      */
     public function createService($offset, $serviceName, ContainerInterface $container, callable $previous = null)
@@ -195,9 +222,12 @@ class Registry implements \ArrayAccess, \Iterator
     }
 
     /**
-     * Return the current element
+     * Return the current element.
+     *
      * @link http://php.net/manual/en/iterator.current.php
+     *
      * @return mixed Can return any type.
+     *
      * @since 5.0.0
      */
     public function current()
@@ -206,9 +236,9 @@ class Registry implements \ArrayAccess, \Iterator
     }
 
     /**
-     * Move forward to next element
+     * Move forward to next element.
+     *
      * @link http://php.net/manual/en/iterator.next.php
-     * @return void Any returned value is ignored.
      * @since 5.0.0
      */
     public function next()
@@ -217,9 +247,12 @@ class Registry implements \ArrayAccess, \Iterator
     }
 
     /**
-     * Return the key of the current element
+     * Return the key of the current element.
+     *
      * @link http://php.net/manual/en/iterator.key.php
+     *
      * @return mixed scalar on success, or null on failure.
+     *
      * @since 5.0.0
      */
     public function key()
@@ -228,10 +261,13 @@ class Registry implements \ArrayAccess, \Iterator
     }
 
     /**
-     * Checks if current position is valid
+     * Checks if current position is valid.
+     *
      * @link http://php.net/manual/en/iterator.valid.php
-     * @return boolean The return value will be casted to boolean and then evaluated.
-     * Returns true on success or false on failure.
+     *
+     * @return bool The return value will be casted to boolean and then evaluated.
+     *              Returns true on success or false on failure.
+     *
      * @since 5.0.0
      */
     public function valid()
@@ -240,9 +276,9 @@ class Registry implements \ArrayAccess, \Iterator
     }
 
     /**
-     * Rewind the Iterator to the first element
+     * Rewind the Iterator to the first element.
+     *
      * @link http://php.net/manual/en/iterator.rewind.php
-     * @return void Any returned value is ignored.
      * @since 5.0.0
      */
     public function rewind()
