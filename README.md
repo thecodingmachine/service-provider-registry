@@ -53,6 +53,18 @@ $registry = new Registry([
 ]);
 ```
 
+Iterating the registry
+======================
+
+The registry implements the `\Iterable` interface, so iterating it is as simple as a `foreach`:
+
+```php
+foreach ($registry as $serviceProvider) {
+    // Do stuff for each service provider.
+    // Service providers will be instantiated on the fly if needed.
+}
+```
+
 Puli integration
 ================
 

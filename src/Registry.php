@@ -10,7 +10,7 @@ use Puli\Discovery\Binding\ClassBinding;
  * This class is designed so that service provider do not need to be instantiated each time the registry is filled.
  * They can be lazily instantiated if needed.
  */
-class Registry implements \ArrayAccess
+class Registry implements \ArrayAccess, \Iterator
 {
     /**
      * The array with lazy values
@@ -31,6 +31,8 @@ class Registry implements \ArrayAccess
      * @var array An array<key, array<servicename, callable>>
      */
     private $serviceFactories = [];
+
+    private $position = 0;
 
     /**
      * Initializes the registry from a list of service providers.
@@ -190,5 +192,61 @@ class Registry implements \ArrayAccess
     public function createService($offset, $serviceName, ContainerInterface $container, callable $previous = null)
     {
         return call_user_func($this->getServices($offset)[$serviceName], $container, $previous);
+    }
+
+    /**
+     * Return the current element
+     * @link http://php.net/manual/en/iterator.current.php
+     * @return mixed Can return any type.
+     * @since 5.0.0
+     */
+    public function current()
+    {
+        return $this->offsetGet($this->position);
+    }
+
+    /**
+     * Move forward to next element
+     * @link http://php.net/manual/en/iterator.next.php
+     * @return void Any returned value is ignored.
+     * @since 5.0.0
+     */
+    public function next()
+    {
+        ++$this->position;
+    }
+
+    /**
+     * Return the key of the current element
+     * @link http://php.net/manual/en/iterator.key.php
+     * @return mixed scalar on success, or null on failure.
+     * @since 5.0.0
+     */
+    public function key()
+    {
+        return $this->position;
+    }
+
+    /**
+     * Checks if current position is valid
+     * @link http://php.net/manual/en/iterator.valid.php
+     * @return boolean The return value will be casted to boolean and then evaluated.
+     * Returns true on success or false on failure.
+     * @since 5.0.0
+     */
+    public function valid()
+    {
+        return $this->offsetExists($this->position);
+    }
+
+    /**
+     * Rewind the Iterator to the first element
+     * @link http://php.net/manual/en/iterator.rewind.php
+     * @return void Any returned value is ignored.
+     * @since 5.0.0
+     */
+    public function rewind()
+    {
+        $this->position = 0;
     }
 }

@@ -129,5 +129,17 @@ class ServiceProviderRegistryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(42, $service);
     }
 
+    public function testIterator()
+    {
+        $registry = new Registry([
+            TestServiceProvider::class
+        ]);
+
+        foreach ($registry as $key => $serviceProvider) {
+            $this->assertEquals(0, $key);
+            $this->assertInstanceOf(TestServiceProvider::class, $serviceProvider);
+        }
+    }
+
 }
 
