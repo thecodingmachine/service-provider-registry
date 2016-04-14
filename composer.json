@@ -15,7 +15,7 @@
     },
     "require": {
         "php": ">=5.6",
-        "container-interop/service-provider": "~0.2.0",
+        "container-interop/service-provider": "dev-callables as 0.3.0",
         "puli/discovery": "^1.0-beta9@beta"
     },
     "require-dev": {

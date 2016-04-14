@@ -6,7 +6,7 @@ use Interop\Container\ServiceProvider;
 
 class TestServiceProvider implements ServiceProvider
 {
-    public static function getServices()
+    public function getServices()
     {
         return [
             'serviceA' => function () {

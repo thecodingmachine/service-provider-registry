@@ -13,7 +13,7 @@ class TestStatefulServiceProvider implements ServiceProvider
         $this->foo = $foo;
     }
 
-    public static function getServices()
+    public function getServices()
     {
         return [
         ];
