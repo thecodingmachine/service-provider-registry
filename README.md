@@ -79,7 +79,7 @@ $registry = new Registry([], $discovery);
 Caching of `getServices`
 ========================
 
-You can use the shortcut `Registry::getServices($key)` method to call the `getServices` method on a service provider. The result is cached, si 2 successive calls will not call the `getServices` method twice.
+You can use the shortcut `Registry::getServices($key)` method to call the `getServices` method on a service provider. The result is cached: 2 successive calls will not call the `getServices` method twice.
 
 
 ```php
