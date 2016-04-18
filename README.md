@@ -56,7 +56,7 @@ $registry = new Registry([
 Iterating the registry
 ======================
 
-The registry implements the `\Iterable` interface, so iterating it is as simple as a `foreach`:
+The registry implements the `\Traversable` interface, so iterating it is as simple as a `foreach`:
 
 ```php
 foreach ($registry as $serviceProvider) {
