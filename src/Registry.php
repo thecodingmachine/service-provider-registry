@@ -12,7 +12,7 @@ use Puli\Discovery\Binding\ClassBinding;
  * This class is designed so that service provider do not need to be instantiated each time the registry is filled.
  * They can be lazily instantiated if needed.
  */
-class Registry implements \ArrayAccess, \Iterator
+class Registry implements RegistryInterface
 {
     /**
      * The array with lazy values.
