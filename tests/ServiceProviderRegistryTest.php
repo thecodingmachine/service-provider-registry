@@ -6,6 +6,7 @@ use Mouf\Picotainer\Picotainer;
 use Puli\Discovery\Api\Type\BindingType;
 use Puli\Discovery\Binding\ClassBinding;
 use Puli\Discovery\InMemoryDiscovery;
+use TheCodingMachine\Discovery\DiscoveryInterface;
 use TheCodingMachine\ServiceProvider\Fixtures\TestServiceProvider;
 use TheCodingMachine\ServiceProvider\Fixtures\TestStatefulServiceProvider;
 
@@ -90,7 +91,7 @@ class ServiceProviderRegistryTest extends \PHPUnit_Framework_TestCase
         $registry[0] = 12;
     }
 
-    public function testDiscovery()
+    public function testPuliDiscovery()
     {
         $discovery = new InMemoryDiscovery();
         $discovery->addBindingType(new BindingType('container-interop/service-provider'));
@@ -98,6 +99,21 @@ class ServiceProviderRegistryTest extends \PHPUnit_Framework_TestCase
         $discovery->addBinding($classBinding);
 
         $registry = new Registry([], $discovery);
+
+        $serviceProvider = $registry[0];
+        $this->assertInstanceOf(TestServiceProvider::class, $serviceProvider);
+    }
+
+    public function testTcmDiscovery()
+    {
+        $discovery = new class implements DiscoveryInterface {
+            public function get(string $assetType): array
+            {
+                return [ TestServiceProvider::class ];
+            }
+        };
+
+        $registry = new Registry([], null, $discovery);
 
         $serviceProvider = $registry[0];
         $this->assertInstanceOf(TestServiceProvider::class, $serviceProvider);

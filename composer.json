@@ -21,7 +21,11 @@
     "require-dev": {
         "phpunit/phpunit": "^4.5",
         "satooshi/php-coveralls": "^1.0",
-        "mouf/picotainer": "^1.0"
+        "mouf/picotainer": "^1.0",
+        "thecodingmachine/discovery": "^1.0"
+    },
+    "suggest": {
+        "thecodingmachine/discovery": "Discover service providers automatically."
     },
     "minimum-stability": "dev",
     "prefer-stable": true
