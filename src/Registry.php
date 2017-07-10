@@ -4,9 +4,7 @@ namespace TheCodingMachine\ServiceProvider;
 
 use Interop\Container\ContainerInterface;
 use Interop\Container\ServiceProvider;
-use Puli\Discovery\Api\Discovery as PuliDiscovery;
-use TheCodingMachine\Discovery\DiscoveryInterface as TcmDiscovery;
-use Puli\Discovery\Binding\ClassBinding;
+use TheCodingMachine\Discovery\DiscoveryInterface as Discovery;
 
 /**
  * A class that holds the list of service providers of a project.
@@ -43,55 +41,25 @@ class Registry implements RegistryInterface
      * Initializes the registry from a list of service providers.
      * This list of service providers can be passed as ServiceProvider instances, or simply class name,
      * or an array of [class name, [constructor params]].
-     * If a Puli $discovery object is passed, the registry is automatically populated with ServiceProviders from Puli.
+     * If a TheCodingMachine/Discovery $discovery object is passed, the registry is automatically populated with ServiceProviders from Discovery.
      *
      * @param array          $lazyArray The array with lazy values
-     * @param PuliDiscovery|null $puliDiscovery
      */
-    public function __construct(array $lazyArray = [], PuliDiscovery $puliDiscovery = null, TcmDiscovery $tcmDiscovery = null)
+    public function __construct(array $lazyArray = [], Discovery $tcmDiscovery = null)
     {
-        if ($puliDiscovery !== null) {
-            $this->lazyArray = $this->discoverPuli($puliDiscovery);
-        } else {
-            $this->lazyArray = [];
-        }
-
-        if ($tcmDiscovery !== null) {
-            $this->lazyArray = array_merge($this->lazyArray, $this->discoverTcm($tcmDiscovery));
-        }
+        $this->lazyArray = $tcmDiscovery ? $this->discoverTcm($tcmDiscovery) : [];
 
         $this->lazyArray = array_merge($this->lazyArray, $lazyArray);
     }
 
     /**
-     * Discovers service provider class names using Puli.
-     *
-     * @param PuliDiscovery $discovery
-     *
-     * @return string[] Returns an array of service providers.
-     */
-    private function discoverPuli(PuliDiscovery $discovery) /*: array*/
-    {
-        $bindings = $discovery->findBindings('container-interop/service-provider');
-        $serviceProviders = [];
-
-        foreach ($bindings as $binding) {
-            if ($binding instanceof ClassBinding) {
-                $serviceProviders[] = $binding->getClassName();
-            }
-        }
-
-        return $serviceProviders;
-    }
-
-    /**
      * Discovers service provider class names using thecodingmachine/discovery.
      *
-     * @param TcmDiscovery $discovery
+     * @param Discovery $discovery
      *
      * @return string[] Returns an array of service providers.
      */
-    private function discoverTcm(TcmDiscovery $discovery) /*: array*/
+    private function discoverTcm(Discovery $discovery) /*: array*/
     {
         return $discovery->get(ServiceProvider::class);
     }
