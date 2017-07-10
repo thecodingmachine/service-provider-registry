@@ -4,7 +4,8 @@ namespace TheCodingMachine\ServiceProvider;
 
 use Interop\Container\ContainerInterface;
 use Interop\Container\ServiceProvider;
-use Puli\Discovery\Api\Discovery;
+use Puli\Discovery\Api\Discovery as PuliDiscovery;
+use TheCodingMachine\Discovery\DiscoveryInterface as TcmDiscovery;
 use Puli\Discovery\Binding\ClassBinding;
 
 /**
@@ -45,25 +46,31 @@ class Registry implements RegistryInterface
      * If a Puli $discovery object is passed, the registry is automatically populated with ServiceProviders from Puli.
      *
      * @param array          $lazyArray The array with lazy values
-     * @param Discovery|null $discovery
+     * @param PuliDiscovery|null $puliDiscovery
      */
-    public function __construct(array $lazyArray = [], Discovery $discovery = null)
+    public function __construct(array $lazyArray = [], PuliDiscovery $puliDiscovery = null, TcmDiscovery $tcmDiscovery = null)
     {
-        if ($discovery !== null) {
-            $this->lazyArray = array_merge($this->discover($discovery), $lazyArray);
+        if ($puliDiscovery !== null) {
+            $this->lazyArray = $this->discoverPuli($puliDiscovery);
         } else {
-            $this->lazyArray = $lazyArray;
+            $this->lazyArray = [];
         }
+
+        if ($tcmDiscovery !== null) {
+            $this->lazyArray = array_merge($this->lazyArray, $this->discoverTcm($tcmDiscovery));
+        }
+
+        $this->lazyArray = array_merge($this->lazyArray, $lazyArray);
     }
 
     /**
      * Discovers service provider class names using Puli.
      *
-     * @param Discovery $discovery
+     * @param PuliDiscovery $discovery
      *
      * @return string[] Returns an array of service providers.
      */
-    private function discover(Discovery $discovery) /*: array*/
+    private function discoverPuli(PuliDiscovery $discovery) /*: array*/
     {
         $bindings = $discovery->findBindings('container-interop/service-provider');
         $serviceProviders = [];
@@ -75,6 +82,18 @@ class Registry implements RegistryInterface
         }
 
         return $serviceProviders;
+    }
+
+    /**
+     * Discovers service provider class names using thecodingmachine/discovery.
+     *
+     * @param TcmDiscovery $discovery
+     *
+     * @return string[] Returns an array of service providers.
+     */
+    private function discoverTcm(TcmDiscovery $discovery) /*: array*/
+    {
+        return $discovery->get(ServiceProvider::class);
     }
 
     /**

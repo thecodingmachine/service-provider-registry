@@ -65,13 +65,31 @@ foreach ($registry as $serviceProvider) {
 }
 ```
 
-Puli integration
-================
+Discovery
+=========
+
+The registry supports 2 discover mechanisms (to automatically find and attach service providers to your application).
+
+Puli discovery
+--------------
 
 As a second parameter, the `Registry` accepts a Puli `Discovery` object. Pass this object and Puli discovery will be used to fetch service providers from your packages.
 
 ```php
 $registry = new Registry([], $discovery);
+
+// The registry now contains all the service providers discoverable by Puli.
+```
+
+Note: Puli has some issues. At the moment of writing (version beta-10), it will serve service providers in an unexpected order. This might cause problems when extending or overriding service providers. Use with caution.
+
+thecodingmachine/discovery
+--------------------------
+
+As a third parameter, the `Registry` accepts the `Discovery` object from [thecodingmachine/discovery](https://github.com/thecodingmachine/discovery). Pass this object and thecodingmachine/discovery will be used to fetch service providers from your packages.
+
+```php
+$registry = new Registry([], null, TheCodingMachine\Discovery::getInstance());
 
 // The registry now contains all the service providers discoverable by Puli.
 ```
