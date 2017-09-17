@@ -8,7 +8,7 @@ class TestStatefulServiceProvider implements ServiceProvider
 {
     public $foo;
 
-    public function __construct($foo)
+    public function __construct($foo = null)
     {
         $this->foo = $foo;
     }

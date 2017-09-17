@@ -28,6 +28,16 @@ class ServiceProviderRegistryTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($registry[0], $registry[0]);
     }
 
+    public function testRegistryArrayWithNoParams()
+    {
+        $registry = new Registry([
+            [TestStatefulServiceProvider::class],
+        ]);
+
+        $this->assertInstanceOf(TestStatefulServiceProvider::class, $registry[0]);
+        $this->assertEquals(null, $registry[0]->foo);
+    }
+
     public function testRegistryArrayWithParams()
     {
         $registry = new Registry([
@@ -132,11 +142,14 @@ class ServiceProviderRegistryTest extends \PHPUnit_Framework_TestCase
     {
         $registry = new Registry([
             TestServiceProvider::class,
+            TestServiceProvider::class,
         ]);
 
+        $i = 0;
         foreach ($registry as $key => $serviceProvider) {
-            $this->assertEquals(0, $key);
+            $this->assertEquals($i, $key);
             $this->assertInstanceOf(TestServiceProvider::class, $serviceProvider);
+            $i++;
         }
     }
 }
