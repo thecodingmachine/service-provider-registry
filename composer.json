@@ -1,7 +1,7 @@
 {
     "name": "thecodingmachine/service-provider-registry",
     "type": "library",
-    "description": "This package provides a service provider registry than can lazily instantiate the service providers it contains.",
+    "description": "This package provides a service provider registry that can lazily instantiate the service providers it contains.",
     "license": "MIT",
     "autoload": {
         "psr-4": {
@@ -22,7 +22,8 @@
         "phpunit/phpunit": "^4.5",
         "satooshi/php-coveralls": "^1.0",
         "mouf/picotainer": "^1.0",
-        "thecodingmachine/discovery": "^1.0"
+        "thecodingmachine/discovery": "^1.0",
+        "humbug/humbug": "~1.0@dev"
     },
     "suggest": {
         "thecodingmachine/discovery": "Discover service providers automatically."
