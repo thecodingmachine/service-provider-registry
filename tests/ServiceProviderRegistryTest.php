@@ -119,12 +119,26 @@ class ServiceProviderRegistryTest extends \PHPUnit_Framework_TestCase
             new TestServiceProvider(),
         ]);
 
-        $services = $registry->getServices(0);
+        $services = $registry->getFactories(0);
         $this->assertArrayHasKey('serviceA', $services);
 
-        $services2 = $registry->getServices(0);
+        $services2 = $registry->getFactories(0);
 
         $this->assertSame($services['serviceA'], $services2['serviceA']);
+    }
+
+    public function testExtendServices()
+    {
+        $registry = new Registry([
+            new TestServiceProvider(),
+        ]);
+
+        $services = $registry->getExtensions(0);
+        $this->assertArrayHasKey('serviceB', $services);
+
+        $services2 = $registry->getExtensions(0);
+
+        $this->assertSame($services['serviceB'], $services2['serviceB']);
     }
 
     public function testGetServiceFactory()
@@ -136,6 +150,17 @@ class ServiceProviderRegistryTest extends \PHPUnit_Framework_TestCase
         $service = $registry->createService(0, 'param', new Picotainer([]));
 
         $this->assertEquals(42, $service);
+    }
+
+    public function testGetServiceExtension()
+    {
+        $registry = new Registry([
+            new TestServiceProvider(),
+        ]);
+
+        $service = $registry->extendService(0, 'serviceB', new Picotainer([]), null);
+
+        $this->assertInstanceOf(\stdClass::class, $service);
     }
 
     public function testIterator()

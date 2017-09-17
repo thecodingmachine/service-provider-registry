@@ -29,15 +29,24 @@ interface RegistryInterface extends \ArrayAccess, \Iterator
      *
      * @return array
      */
-    public function getServices($offset);
+    public function getFactories($offset);
 
     /**
      * @param string $offset Key of the service provider in the registry
      * @param string $serviceName Name of the service to fetch
      * @param ContainerInterface $container
-     * @param callable|null $previous
      *
      * @return mixed
      */
-    public function createService($offset, $serviceName, ContainerInterface $container, callable $previous = null);
+    public function createService($offset, $serviceName, ContainerInterface $container);
+
+    /**
+     * @param string             $offset      Key of the service provider in the registry
+     * @param string             $serviceName Name of the service to fetch
+     * @param ContainerInterface $container
+     * @param mixed              $previous
+     *
+     * @return mixed
+     */
+    public function extendService($offset, $serviceName, ContainerInterface $container, $previous);
 }
