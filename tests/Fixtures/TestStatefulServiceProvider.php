@@ -3,8 +3,9 @@
 namespace TheCodingMachine\ServiceProvider\Fixtures;
 
 use Interop\Container\ServiceProvider;
+use Interop\Container\ServiceProviderInterface;
 
-class TestStatefulServiceProvider implements ServiceProvider
+class TestStatefulServiceProvider implements ServiceProviderInterface
 {
     public $foo;
 
@@ -13,9 +14,14 @@ class TestStatefulServiceProvider implements ServiceProvider
         $this->foo = $foo;
     }
 
-    public function getServices()
+    public function getFactories()
     {
         return [
         ];
+    }
+
+    public function getExtensions()
+    {
+        return [];
     }
 }

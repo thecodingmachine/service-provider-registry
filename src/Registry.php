@@ -3,7 +3,7 @@
 namespace TheCodingMachine\ServiceProvider;
 
 use Interop\Container\ContainerInterface;
-use Interop\Container\ServiceProvider;
+use Interop\Container\ServiceProviderInterface;
 use TheCodingMachine\Discovery\DiscoveryInterface as Discovery;
 
 /**
@@ -28,12 +28,20 @@ class Registry implements RegistryInterface
     private $constructedArray = [];
 
     /**
-     * An array of service factories (the result of the call to 'getServices'),
+     * An array of service factories (the result of the call to 'getFactories'),
      * indexed by service provider.
      *
      * @var array An array<key, array<servicename, callable>>
      */
     private $serviceFactories = [];
+
+    /**
+     * An array of service extensions (the result of the call to 'getExtensions'),
+     * indexed by service provider.
+     *
+     * @var array An array<key, array<servicename, callable>>
+     */
+    private $serviceExtensions = [];
 
     private $position = 0;
 
@@ -61,7 +69,7 @@ class Registry implements RegistryInterface
      */
     private function discoverTcm(Discovery $discovery) /*: array*/
     {
-        return $discovery->get(ServiceProvider::class);
+        return $discovery->get(ServiceProviderInterface::class);
     }
 
     /**
@@ -72,14 +80,14 @@ class Registry implements RegistryInterface
      *
      * @throws ServiceProviderRegistryInvalidArgumentException
      */
-    public function push($className, ...$params)
+    public function push($className, ...$params): int
     {
-        if ($className instanceof ServiceProvider) {
+        if ($className instanceof ServiceProviderInterface) {
             $this->lazyArray[] = $className;
         } elseif (is_string($className)) {
             $this->lazyArray[] = [$className, $params];
         } else {
-            throw new InvalidArgumentException('Push expects first parameter to be a fully qualified class name or an instance of Interop\\Container\\ServiceProvider');
+            throw new InvalidArgumentException('Push expects first parameter to be a fully qualified class name or an instance of Interop\\Container\\ServiceProviderInterface');
         }
         end($this->lazyArray);
 
@@ -126,7 +134,7 @@ class Registry implements RegistryInterface
             return $this->constructedArray[$offset];
         } else {
             $item = $this->lazyArray[$offset];
-            if ($item instanceof ServiceProvider) {
+            if ($item instanceof ServiceProviderInterface) {
                 $this->constructedArray[$offset] = $item;
 
                 return $item;
@@ -137,6 +145,7 @@ class Registry implements RegistryInterface
                 $className = $item;
                 $params = [];
             }
+
             $this->constructedArray[$offset] = new $className(...$params);
 
             return $this->constructedArray[$offset];
@@ -179,33 +188,62 @@ class Registry implements RegistryInterface
     }
 
     /**
-     * Returns the result of the getServices call on service provider whose key in the registry is $offset.
-     * The result is cached in the registry so 2 successive calls will trigger `getServices` only once.
+     * Returns the result of the getFactories call on service provider whose key in the registry is $offset.
+     * The result is cached in the registry so 2 successive calls will trigger `getFactories` only once.
      *
      * @param string $offset Key of the service provider in the registry
      *
      * @return array
      */
-    public function getServices($offset)
+    public function getFactories($offset) : array
     {
         if (!isset($this->serviceFactories[$offset])) {
-            $this->serviceFactories[$offset] = $this->offsetGet($offset)->getServices();
+            $this->serviceFactories[$offset] = $this->offsetGet($offset)->getFactories();
         }
 
         return $this->serviceFactories[$offset];
     }
 
     /**
+     * Returns the result of the getExtensions call on service provider whose key in the registry is $offset.
+     * The result is cached in the registry so 2 successive calls will trigger `getExtensions` only once.
+     *
+     * @param string $offset Key of the service provider in the registry
+     *
+     * @return array
+     */
+    public function getExtensions($offset) : array
+    {
+        if (!isset($this->serviceExtensions[$offset])) {
+            $this->serviceExtensions[$offset] = $this->offsetGet($offset)->getExtensions();
+        }
+
+        return $this->serviceExtensions[$offset];
+    }
+
+    /**
      * @param string             $offset      Key of the service provider in the registry
      * @param string             $serviceName Name of the service to fetch
      * @param ContainerInterface $container
-     * @param callable|null      $previous
      *
      * @return mixed
      */
-    public function createService($offset, $serviceName, ContainerInterface $container, callable $previous = null)
+    public function createService($offset, string $serviceName, ContainerInterface $container)
     {
-        return call_user_func($this->getServices($offset)[$serviceName], $container, $previous);
+        return call_user_func($this->getFactories($offset)[$serviceName], $container);
+    }
+
+    /**
+     * @param string             $offset      Key of the service provider in the registry
+     * @param string             $serviceName Name of the service to fetch
+     * @param ContainerInterface $container
+     * @param mixed              $previous
+     *
+     * @return mixed
+     */
+    public function extendService($offset, string $serviceName, ContainerInterface $container, $previous)
+    {
+        return call_user_func($this->getExtensions($offset)[$serviceName], $container, $previous);
     }
 
     /**

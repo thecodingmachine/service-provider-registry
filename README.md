@@ -1,6 +1,6 @@
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/thecodingmachine/service-provider-registry/badges/quality-score.png?b=1.0)](https://scrutinizer-ci.com/g/thecodingmachine/service-provider-registry/?branch=1.0)
-[![Build Status](https://travis-ci.org/thecodingmachine/service-provider-registry.svg?branch=1.0)](https://travis-ci.org/thecodingmachine/service-provider-registry)
-[![Coverage Status](https://coveralls.io/repos/thecodingmachine/service-provider-registry/badge.svg?branch=1.0&service=github)](https://coveralls.io/github/thecodingmachine/service-provider-registry?branch=1.0)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/thecodingmachine/service-provider-registry/badges/quality-score.png?b=3.0)](https://scrutinizer-ci.com/g/thecodingmachine/service-provider-registry/?branch=3.0)
+[![Build Status](https://travis-ci.org/thecodingmachine/service-provider-registry.svg?branch=3.0)](https://travis-ci.org/thecodingmachine/service-provider-registry)
+[![Coverage Status](https://coveralls.io/repos/thecodingmachine/service-provider-registry/badge.svg?branch=3.0&service=github)](https://coveralls.io/github/thecodingmachine/service-provider-registry?branch=3.0)
 
 
 What is it?
@@ -78,14 +78,16 @@ $registry = new Registry([], TheCodingMachine\Discovery::getInstance());
 // The registry now contains all the service providers discoverable by thecodingmachine/discovery.
 ```
 
-Caching of `getServices`
-========================
+Caching of `getFactories` and `getExtensions`
+=============================================
 
-You can use the shortcut `Registry::getServices($key)` method to call the `getServices` method on a service provider. The result is cached: 2 successive calls will not call the `getServices` method twice.
+You can use the shortcut `Registry::getFactories($key)` or `Registry::getExtensions($key)` methods to call the `getFactories` and `getExtensions` methods on a service provider. The result is cached: 2 successive calls will not call the `getFactories` or `getExtensions` methods twice.
 
 
 ```php
-$services = $registry->getServices(0);
+$factories = $registry->getFactories(0);
+
+$extensions = $registry->getExtensions(0);
 ```
 
 Using the registry to create services
@@ -95,7 +97,14 @@ Even better, using the `createService` method of the registry, you can directly 
 
 
 ```php
-$myService = $registry->createService(0, 'serviceName', $container, $previous);
+$myService = $registry->createService(0, 'serviceName', $container);
+```
+
+Using the `extendService` method of the registry, you can directly call the service extension:
+
+
+```php
+$myService = $registry->extendService(0, 'serviceName', $container, $previousService);
 ```
 
 Why?

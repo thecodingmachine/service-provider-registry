@@ -2,18 +2,27 @@
 
 namespace TheCodingMachine\ServiceProvider\Fixtures;
 
-use Interop\Container\ServiceProvider;
+use Interop\Container\ServiceProviderInterface;
 
-class TestServiceProvider implements ServiceProvider
+class TestServiceProvider implements ServiceProviderInterface
 {
-    public function getServices()
+    public function getFactories()
     {
         return [
             'serviceA' => function () {
-                new \stdClass();
+                return new \stdClass();
             },
             'param' => function () {
                 return 42;
+            },
+        ];
+    }
+
+    public function getExtensions()
+    {
+        return [
+            'serviceB' => function () {
+                return new \stdClass();
             },
         ];
     }
