@@ -19,7 +19,7 @@ interface RegistryInterface extends \ArrayAccess, \Iterator
      *
      * @throws ServiceProviderRegistryInvalidArgumentException
      */
-    public function push($className, ...$params);
+    public function push($className, ...$params): int;
 
     /**
      * Returns the result of the getServices call on service provider whose key in the registry is $offset.
@@ -38,7 +38,7 @@ interface RegistryInterface extends \ArrayAccess, \Iterator
      *
      * @return mixed
      */
-    public function createService($offset, $serviceName, ContainerInterface $container);
+    public function createService($offset, string $serviceName, ContainerInterface $container);
 
     /**
      * @param string             $offset      Key of the service provider in the registry
@@ -48,5 +48,5 @@ interface RegistryInterface extends \ArrayAccess, \Iterator
      *
      * @return mixed
      */
-    public function extendService($offset, $serviceName, ContainerInterface $container, $previous);
+    public function extendService($offset, string $serviceName, ContainerInterface $container, $previous);
 }

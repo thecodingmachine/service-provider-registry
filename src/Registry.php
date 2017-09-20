@@ -80,7 +80,7 @@ class Registry implements RegistryInterface
      *
      * @throws ServiceProviderRegistryInvalidArgumentException
      */
-    public function push($className, ...$params)
+    public function push($className, ...$params): int
     {
         if ($className instanceof ServiceProviderInterface) {
             $this->lazyArray[] = $className;
@@ -195,7 +195,7 @@ class Registry implements RegistryInterface
      *
      * @return array
      */
-    public function getFactories($offset)
+    public function getFactories($offset) : array
     {
         if (!isset($this->serviceFactories[$offset])) {
             $this->serviceFactories[$offset] = $this->offsetGet($offset)->getFactories();
@@ -212,7 +212,7 @@ class Registry implements RegistryInterface
      *
      * @return array
      */
-    public function getExtensions($offset)
+    public function getExtensions($offset) : array
     {
         if (!isset($this->serviceExtensions[$offset])) {
             $this->serviceExtensions[$offset] = $this->offsetGet($offset)->getExtensions();
@@ -228,7 +228,7 @@ class Registry implements RegistryInterface
      *
      * @return mixed
      */
-    public function createService($offset, $serviceName, ContainerInterface $container)
+    public function createService($offset, string $serviceName, ContainerInterface $container)
     {
         return call_user_func($this->getFactories($offset)[$serviceName], $container);
     }
@@ -241,7 +241,7 @@ class Registry implements RegistryInterface
      *
      * @return mixed
      */
-    public function extendService($offset, $serviceName, ContainerInterface $container, $previous)
+    public function extendService($offset, string $serviceName, ContainerInterface $container, $previous)
     {
         return call_user_func($this->getExtensions($offset)[$serviceName], $container, $previous);
     }
