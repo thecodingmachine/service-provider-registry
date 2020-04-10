@@ -1,8 +1,7 @@
 <?php
 namespace TheCodingMachine\ServiceProvider;
 
-use Interop\Container\ContainerInterface;
-
+use Psr\Container\ContainerInterface;
 
 /**
  * A class that holds the list of service providers of a project.
