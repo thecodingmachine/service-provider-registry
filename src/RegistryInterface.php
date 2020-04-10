@@ -16,7 +16,7 @@ interface RegistryInterface extends \ArrayAccess, \Iterator
      *
      * @return int The key in the array
      *
-     * @throws ServiceProviderRegistryInvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function push($className, ...$params): int;
 
