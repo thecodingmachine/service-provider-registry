@@ -2,8 +2,8 @@
 
 namespace TheCodingMachine\ServiceProvider;
 
-use Interop\Container\ContainerInterface;
 use Interop\Container\ServiceProviderInterface;
+use Psr\Container\ContainerInterface;
 use TheCodingMachine\Discovery\DiscoveryInterface as Discovery;
 
 /**
